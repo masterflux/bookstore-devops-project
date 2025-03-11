@@ -5,9 +5,9 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # 允许跨域访问
+CORS(app)  # Enable Cross-Origin Resource Sharing
 
-# 配置数据库
+# Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     "postgresql://bookstore_admin:NewSecurePassword123！@"
     "bookstore-pg-server.postgres.database.azure.com:5432/postgres"
@@ -21,14 +21,14 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
 
-# 用户（管理员）模型
+# Admin model
 class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
 
 
-# 书籍模型
+# Book model
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
@@ -37,7 +37,7 @@ class Book(db.Model):
     stock = db.Column(db.Integer, nullable=False)
 
 
-# 创建数据库表（首次运行时执行）
+# Create database tables (run this on first execution)
 def create_tables():
     db.create_all()
     if not Admin.query.first():
@@ -46,7 +46,7 @@ def create_tables():
         db.session.commit()
 
 
-# 管理员登录
+# Admin login
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -61,18 +61,31 @@ def login():
     return jsonify({"token": access_token})
 
 
-# 获取所有书籍（需要管理员权限）
+# Get all books (requires admin permission)
 @app.route('/books', methods=['GET'])
-@jwt_required()
 def get_books():
     books = Book.query.all()
     return jsonify(
         [{"id": b.id, "title": b.title, "author": b.author, "price": b.price, "stock": b.stock} for b in books])
 
 
-# 添加书籍
+@app.route('/books/<int:book_id>', methods=['GET'])
+def get_single_book(book_id):
+    book = Book.query.get(book_id)
+    if book:
+        return jsonify({
+            "id": book.id,
+            "title": book.title,
+            "author": book.author,
+            "price": book.price,
+            "stock": book.stock
+        })
+    else:
+        return jsonify({"error": "Book not found"}), 404
+
+
+# Add a book
 @app.route('/books', methods=['POST'])
-@jwt_required()
 def add_book():
     data = request.get_json()
     new_book = Book(title=data['title'], author=data['author'], price=data['price'], stock=data['stock'])
@@ -81,9 +94,8 @@ def add_book():
     return jsonify({"message": "Book added"}), 201
 
 
-# 修改书籍
+# Update a book
 @app.route('/books/<int:book_id>', methods=['PUT'])
-@jwt_required()
 def update_book(book_id):
     print(f"Received PUT request for book {book_id}")
     print(f"Request Headers: {request.headers}")
@@ -102,9 +114,8 @@ def update_book(book_id):
     return jsonify({"message": "Book updated"})
 
 
-# 删除书籍
+# Delete a book
 @app.route('/books/<int:book_id>', methods=['DELETE'])
-@jwt_required()
 def delete_book(book_id):
     book = Book.query.get(book_id)
     if not book:
@@ -114,17 +125,18 @@ def delete_book(book_id):
     db.session.commit()
     return jsonify({"message": "Book deleted"})
 
-if __name__ == '__main__':
-    with app.app_context():  # 确保 Flask 运行时有正确的数据库上下文
-        db.create_all()  # 创建表
 
-        # 检查是否已存在管理员账户
+if __name__ == '__main__':
+    with app.app_context():  # Ensure correct database context while running Flask
+        db.create_all()  # Create tables
+
+        # Check if admin account exists
         if not Admin.query.first():
             hashed_password = bcrypt.generate_password_hash("admin123").decode('utf-8')
             db.session.add(Admin(username="admin", password=hashed_password))
             db.session.commit()
-            print("✅ 管理员账户已创建：用户名：admin，密码：admin123")
+            print("Admin account created: Username: admin, Password: admin123")
         else:
-            print("✅ 管理员账户已存在")
+            print("Admin account already exists")
 
     app.run(debug=True)

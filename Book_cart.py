@@ -8,9 +8,9 @@ import json
 import requests
 
 app = Flask(__name__)
-CORS(app)  # 允许跨域请求
+CORS(app)  # Allow cross-domain requests
 
-# 🔹 配置 PostgreSQL 数据库（存储购物车数据）
+# 🔹 Configuring a PostgreSQL Database (Storing Shopping Cart Data)
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     "postgresql://bookstore_admin:NewSecurePassword123！@"
     "bookstore-pg-server.postgres.database.azure.com:5432/postgres"
@@ -23,73 +23,79 @@ db = SQLAlchemy(app)
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
 
-# 🔹 连接 Redis（存储临时购物车数据）
+# Connecting to Redis (storing temporary shopping cart data)
 redis_client = redis.StrictRedis(host='localhost', port=6379, decode_responses=True)
 
-# 🔹 目录微服务地址（用于获取商品信息）
+# Catalogue microservice address (for commodity information)
 CATALOG_SERVICE_URL = "http://127.0.0.1:5000"
 
 
-# 用户（管理员）模型
-class Admin(db.Model):
+# User (administrator) model
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
 
 
-# 数据库模型（购物车项）
-class CartItem(db.Model):
+# Database model (shopping cart items)
+class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String(50), nullable=False)  # 每个用户的购物车独立
-    product_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.String(50), nullable=False)  # Separate shopping carts for each user
+    book_id = db.Column(db.Integer, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
 
+class Book(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    author = db.Column(db.String(255), nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    stock = db.Column(db.Integer, nullable=False)
 
-# 创建数据库表（首次运行时执行）
+
+# Create database tables (executed on first run)
 def create_tables():
     db.create_all()
-    if not Admin.query.first():
-        hashed_password = bcrypt.generate_password_hash("admin123").decode('utf-8')
-        db.session.add(Admin(username="admin", password=hashed_password))
+    if not User.query.first():
+        hashed_password = bcrypt.generate_password_hash("admin").decode('utf-8')
+        db.session.add(User(username="admin", password=hashed_password))
         db.session.commit()
 
 
-# 管理员登录
+# Administrator login
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    admin = Admin.query.filter_by(username=data['username']).first()
+    user = User.query.filter_by(username=data['username']).first()
 
-    if not admin or not bcrypt.check_password_hash(admin.password, data['password']):
+    if not user or not bcrypt.check_password_hash(user.password, data['password']):
         return jsonify({"error": "Invalid credentials"}), 401
 
-    access_token = create_access_token(identity=admin.username)
+    access_token = create_access_token(identity=user.id)
     if isinstance(access_token, bytes):
         access_token = access_token.decode('utf-8')
     return jsonify({"token": access_token})
 
 
-# ✅ 获取购物车（JWT 认证）
-# 获取购物车（JWT认证）
+# Get Cart (JWT Authentication)
 @app.route('/cart', methods=['GET'])
 @jwt_required()
 def get_cart():
     user_id = get_jwt_identity()
 
-    # 查询数据库获取购物车数据
-    cart_items = CartItem.query.filter_by(user_id=user_id).all()
+    # Query the database for shopping cart data
+    cart_items = Cart.query.filter_by(user_id=user_id).all()
     cart_list = []
 
     for item in cart_items:
-        # 从目录服务获取商品详情
-        product_data = requests.get(f"{CATALOG_SERVICE_URL}/books/{item.product_id}").json()
+        # Getting product details from catalogue services
+        book_data = requests.get(f"{CATALOG_SERVICE_URL}/books/{item.book_id}").json()
         cart_list.append({
             "id": item.id,
-            "title": product_data["title"],
-            "author": product_data["author"],
-            "price": product_data["price"],
+            "title": book_data["title"],
+            "author": book_data["author"],
+            "price": book_data["price"],
             "quantity": item.quantity,
-            "total_price": item.quantity * product_data["price"]
+            "total_price": item.quantity * book_data["price"]
         })
 
     return jsonify(cart_list), 200
@@ -100,95 +106,113 @@ def get_cart():
 def add_to_cart():
     user_id = get_jwt_identity()
     data = request.get_json()
-    product_id = data["product_id"]
-    quantity = data["quantity"]
+    book = Book.query.get(data['book_id'])
 
-    # 🔍 检查目录服务是否存在该商品，使用 id 进行查询
-    product_response = requests.get(f"{CATALOG_SERVICE_URL}/books/{product_id}")
-    print(f"Product response status: {product_response.status_code}")
-    print(f"Product response content: {product_response.text}")  # 输出返回的响应内容
+    if not book or book.stock < data['quantity']:
+        return jsonify({"error": "Insufficient stock"}), 400
 
-    if product_response.status_code != 200:
-        return jsonify({"error": "商品不存在"}), 404
-
-    product_data = product_response.json()
-
-    # ✅ 检查库存是否足够
-    if product_data["stock"] < quantity:
-        return jsonify({"error": "库存不足"}), 400
-
-    # ✅ 将商品添加到数据库购物车
-    existing_item = CartItem.query.filter_by(user_id=user_id, product_id=product_id).first()
-    if existing_item:
-        existing_item.quantity += quantity
-    else:
-        new_item = CartItem(user_id=user_id, product_id=product_id, quantity=quantity)
-        db.session.add(new_item)
-
+    book.stock -= data['quantity']  # Inventory reduction
+    cart_item = Cart(user_id=user_id, book_id=data['book_id'], quantity=data['quantity'])
+    db.session.add(cart_item)
     db.session.commit()
-    return jsonify({"message": "商品已添加到购物车"}), 201
 
-# ✅ 更新购物车商品数量
-@app.route('/cart/<int:product_id>', methods=['PUT'])
+    return jsonify({"message": "Added to cart"}), 201
+
+# Update the number of items in the shopping cart
+@app.route('/cart/<int:book_id>', methods=['PUT'])
 @jwt_required()
-def update_cart(product_id):
-    user_id = get_jwt_identity()
-    data = request.get_json()
-    quantity = data["quantity"]
+def update_cart(book_id):
+    user_id = get_jwt_identity()  # Get current user ID
+    data = request.get_json()  # Get request data
+    quantity = data["quantity"]  # Getting new quantities
 
-    cart_item = CartItem.query.filter_by(user_id=user_id, product_id=product_id).first()
+    # Query items in the shopping cart
+    cart_item = Cart.query.filter_by(user_id=user_id, book_id=book_id).first()
     if not cart_item:
-        return jsonify({"error": "商品不在购物车中"}), 404
+        return jsonify({"error": "Item is not in the shopping cart"}), 404
 
-    # 检查库存
-    product_response = requests.get(f"{CATALOG_SERVICE_URL}/books/{product_id}")
-    if product_response.status_code != 200:
-        return jsonify({"error": "商品不存在"}), 404
+    # Inventory Enquiry
+    book_response = requests.get(f"{CATALOG_SERVICE_URL}/books/{book_id}")
+    if book_response.status_code != 200:
+        return jsonify({"error": "Book does not exist"}), 404
 
-    product_data = product_response.json()
-    if product_data["stock"] < quantity:
-        return jsonify({"error": "库存不足"}), 400
+    book_data = book_response.json()
 
-    cart_item.quantity = quantity
+    # Checking the adequacy of stock
+    if book_data["stock"] < quantity:
+        return jsonify({"error": f"Insufficient stock, current inventory：{book_data['stock']}"}), 400
+
+    # Update inventory
+    new_stock = book_data["stock"] - quantity
+    requests.put(f"{CATALOG_SERVICE_URL}/books/{book_id}", json={"stock": new_stock})
+
+    # Update the number of items in the shopping cart
+    cart_item.quantity += quantity
     db.session.commit()
-    return jsonify({"message": "购物车已更新"}), 200
 
+    return jsonify({"message": "Shopping cart has been updated and inventory has been reduced"}), 200
 
-# ✅ 删除购物车商品
-@app.route('/cart/<int:product_id>', methods=['DELETE'])
+@app.route('/cart/<int:book_id>', methods=['DELETE'])
 @jwt_required()
-def delete_cart_item(product_id):
+def delete_cart_item(book_id):
     user_id = get_jwt_identity()
-    cart_item = CartItem.query.filter_by(user_id=user_id, product_id=product_id).first()
+    cart_item = Cart.query.filter_by(user_id=user_id, book_id=book_id).first()
 
     if not cart_item:
-        return jsonify({"error": "商品不在购物车中"}), 404
+        return jsonify({"error": "Item is not in the shopping cart"}), 404
 
+    # Inventory Enquiry
+    book_response = requests.get(f"{CATALOG_SERVICE_URL}/books/{book_id}")
+    if book_response.status_code != 200:
+        return jsonify({"error": "Commodity does not exist"}), 404
+
+    book_data = book_response.json()
+
+    # Restoration of stockpiles
+    new_stock = book_data["stock"] + cart_item.quantity
+    requests.put(f"{CATALOG_SERVICE_URL}/books/{book_id}", json={"stock": new_stock})
+
+    # Deleting items from the shopping cart
     db.session.delete(cart_item)
     db.session.commit()
-    return jsonify({"message": "商品已从购物车删除"}), 200
 
+    return jsonify({"message": "Item has been removed from the shopping cart and stock has been restored."}), 200
 
-# ✅ 清空购物车
 @app.route('/cart/clear', methods=['DELETE'])
 @jwt_required()
 def clear_cart():
     user_id = get_jwt_identity()
-    CartItem.query.filter_by(user_id=user_id).delete()
-    db.session.commit()
-    return jsonify({"message": "购物车已清空"}), 200
+    cart_items = Cart.query.filter_by(user_id=user_id).all()
 
+    if not cart_items:
+        return jsonify({"error": "Shopping cart is empty"}), 404
+
+    # Iterate through each item in the shopping cart to restore stock
+    for item in cart_items:
+        book_response = requests.get(f"{CATALOG_SERVICE_URL}/books/{item.book_id}")
+        if book_response.status_code != 200:
+            return jsonify({"error": "Commodity does not exist"}), 404
+
+        book_data = book_response.json()
+        new_stock = book_data["stock"] + item.quantity
+        requests.put(f"{CATALOG_SERVICE_URL}/books/{item.book_id}", json={"stock": new_stock})
+
+    # Delete all items in the shopping cart
+    Cart.query.filter_by(user_id=user_id).delete()
+    db.session.commit()
+
+    return jsonify({"message": "Shopping cart has been emptied and stock has been restored"}), 200
 
 if __name__ == '__main__':
-    with app.app_context():  # 确保 Flask 运行时有正确的数据库上下文
-        db.create_all()  # 创建表
+    with app.app_context():  # Ensure that Flask is running with the correct database context
+        db.create_all()  # Create Table
 
-        # 检查是否已存在管理员账户
-        if not Admin.query.first():
+        # Check if an administrator account already exists
+        if not User.query.first():
             hashed_password = bcrypt.generate_password_hash("admin123").decode('utf-8')
-            db.session.add(Admin(username="admin", password=hashed_password))
+            db.session.add(User(username="admin", password=hashed_password))
             db.session.commit()
-            print("✅ 管理员账户已创建：用户名：admin，密码：admin123")
+            print("User account created: username: admin, password: admin123")
         else:
-            print("✅ 管理员账户已存在")
+            print("Administrator account already exists")
     app.run(debug=True, port=5001)
