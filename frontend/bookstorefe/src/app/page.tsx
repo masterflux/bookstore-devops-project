@@ -13,38 +13,22 @@ interface Book {
   image: string
 }
 
-// Simulate fetching data from a catalog service
+// Fetch books from our API layer
 async function getBooks(): Promise<Book[]> {
-  return [
-    {
-      id: 1,
-      title: 'The Great Gatsby',
-      author: 'F. Scott Fitzgerald',
-      description: 'A classic novel depicting American society in the 1920s with an elegant narrative style.',
-      price: 10.99,
-      image: '/images/book1.jpg',
-    },
-    {
-      id: 2,
-      title: '1984',
-      author: 'George Orwell',
-      description: 'A dystopian novel exploring the consequences of a totalitarian regime.',
-      price: 8.99,
-      image: '/images/book2.jpg',
-    },
-    {
-      id: 3,
-      title: 'To Kill a Mockingbird',
-      author: 'Harper Lee',
-      description: 'An inspiring story addressing racial injustice in the American South.',
-      price: 12.99,
-      image: '/images/book3.jpg',
-    },
-  ]
+  console.log('%cgetBooks11: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;');
+  // Adjust the URL as needed; a relative URL works on the server side.
+  const res = await fetch('http://localhost:3000/api/books', { cache: 'no-store' })
+  if (!res.ok) {
+    // Optionally, add error handling here.
+    return []
+  }
+  return res.json()
 }
+
 
 export default async function Home() {
   const books = await getBooks()
+  console.log('%cbooks: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;',books);
 
   return (
     <>
