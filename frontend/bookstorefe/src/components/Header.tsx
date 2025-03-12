@@ -1,0 +1,69 @@
+// components/Header.tsx
+'use client'
+import { useRouter } from 'next/navigation'
+
+export default function Header() {
+    const router = useRouter()
+
+    const handleLogin = () => {
+        router.push('/login')
+    }
+
+    const handleCart = () => {
+        // For demonstration, check for a token in localStorage.
+        const token = localStorage.getItem('token')
+        if (token) {
+            router.push('/cart')
+        } else {
+            router.push('/login')
+        }
+    }
+
+    return (
+        <header className="bg-gradient-to-r from-blue-700 to-purple-700 text-white p-4 shadow-md">
+            <div className="container mx-auto flex items-center justify-between">
+                <div className="flex items-center space-x-8">
+                    <h1 className="text-3xl font-bold">Bookstore</h1>
+                    <nav>
+                        <ul className="flex space-x-4">
+                            <li>
+                                <a href="#" className="hover:text-gray-200">
+                                    Home
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" className="hover:text-gray-200">
+                                    Categories
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" className="hover:text-gray-200">
+                                    Best Sellers
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" className="hover:text-gray-200">
+                                    Contact
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div className="flex items-center space-x-4">
+                    <button
+                        onClick={handleLogin}
+                        className="bg-transparent border border-white px-4 py-2 rounded hover:bg-white hover:text-blue-700 transition"
+                    >
+                        Login
+                    </button>
+                    <button
+                        onClick={handleCart}
+                        className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded hover:from-blue-600 hover:to-purple-600 transition"
+                    >
+                        Cart
+                    </button>
+                </div>
+            </div>
+        </header>
+    )
+}

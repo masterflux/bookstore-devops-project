@@ -25,7 +25,7 @@ export function BookCard({ book }: BookCardProps) {
                 <p className="text-gray-600 text-sm">by {book.author}</p>
                 <p className="mt-2 text-gray-700 text-sm">{book.description}</p>
                 <p className="mt-4 font-semibold text-lg">${book.price}</p>
-                <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-500 transition">
+                <button className="mt-4 w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 rounded hover:from-blue-600 hover:to-purple-600 transition">
                     Add to Cart
                 </button>
             </div>

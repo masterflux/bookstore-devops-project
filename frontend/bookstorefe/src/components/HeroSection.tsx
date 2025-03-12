@@ -7,7 +7,8 @@ export default function HeroSection() {
             className="relative bg-cover bg-center h-96"
             style={{ backgroundImage: "url('/images/hero.jpg')" }}
         >
-            <div className="absolute inset-0 bg-black opacity-50"></div>
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black opacity-70"></div>
             <div className="relative z-10 flex items-center justify-center h-full">
                 <div className="text-center">
                     <h2 className="text-4xl md:text-5xl font-bold text-white">
@@ -18,7 +19,7 @@ export default function HeroSection() {
                     </p>
                     <a
                         href="#"
-                        className="mt-6 inline-block bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-500 transition"
+                        className="mt-6 inline-block bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded hover:from-blue-600 hover:to-purple-600 transition"
                     >
                         Shop Now
                     </a>
