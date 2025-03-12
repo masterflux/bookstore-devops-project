@@ -4,7 +4,6 @@ from flask_jwt_extended import JWTManager, jwt_required, create_access_token, ge
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 import redis
-import json
 import requests
 
 app = Flask(__name__)
