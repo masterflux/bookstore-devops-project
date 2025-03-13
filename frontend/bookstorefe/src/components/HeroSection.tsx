@@ -14,7 +14,7 @@ export default function HeroSection() {
                     <h2 className="text-4xl md:text-5xl font-bold text-white">
                         Discover Your Next Favorite Book
                     </h2>
-                    <p className="mt-4 text-lg text-gray-200">
+                    <p className="mt-4 text-lg text-gray-400">
                         Explore a wide selection of books and find your perfect read
                     </p>
                     <a

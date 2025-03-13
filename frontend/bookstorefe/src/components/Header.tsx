@@ -24,7 +24,9 @@ export default function Header() {
         <header className="bg-gradient-to-r from-blue-700 to-purple-700 text-white p-4 shadow-md">
             <div className="container mx-auto flex items-center justify-between">
                 <div className="flex items-center space-x-8">
-                    <h1 className="text-3xl font-bold">Bookstore</h1>
+                    <h1 className="text-5xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:text-white hover:scale-105 transition-all duration-300">
+                        Bookstore
+                    </h1>
                     <nav>
                         <ul className="flex space-x-4">
                             <li>

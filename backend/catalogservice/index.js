@@ -24,10 +24,8 @@ const pool = new Pool({
 
 // Get all books
 app.get('/books', async (req, res) => {
-    console.log('%cres: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;',res);
     try {
         const result = await pool.query('SELECT * FROM book');
-        console.log('%cresult: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;',result);
         res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: 'Server error' });
