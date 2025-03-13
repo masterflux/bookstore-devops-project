@@ -40,6 +40,11 @@ export default function Header() {
                                 </Link>
                             </li>
                             <li>
+                                <a href="#" onClick={handleCart} className="hover:text-gray-200">
+                                    Cart
+                                </a>
+                            </li>
+                            {/* <li>
                                 <a href="#" className="hover:text-gray-200">
                                     Best Sellers
                                 </a>
@@ -48,7 +53,7 @@ export default function Header() {
                                 <a href="#" className="hover:text-gray-200">
                                     Contact
                                 </a>
-                            </li>
+                            </li> */}
                         </ul>
                     </nav>
                 </div>
@@ -58,12 +63,6 @@ export default function Header() {
                         className="bg-transparent border border-white px-4 py-2 rounded hover:bg-white hover:text-blue-700 transition"
                     >
                         Login
-                    </button>
-                    <button
-                        onClick={handleCart}
-                        className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded hover:from-blue-600 hover:to-purple-600 transition"
-                    >
-                        Cart
                     </button>
                 </div>
             </div>

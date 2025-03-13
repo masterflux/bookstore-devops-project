@@ -7,7 +7,7 @@ interface Book {
     author: string
     description: string
     price: number
-    image: string
+    imageurl: string
 }
 
 interface BookCardProps {
@@ -20,7 +20,7 @@ export function BookCard({ book }: BookCardProps) {
             <div className="relative h-60 w-full">
                 <div className="relative w-60 h-60 mx-auto my-4 p-4 bg-white rounded shadow">
                     <Image
-                        src={book.image || BlankImage}
+                        src={book.imageurl || BlankImage}
                         alt={book.title}
                         layout="fill"  // To make sure the image fills the container
                         objectFit="cover"  // To ensure the image doesn't stretch but is cropped to fit the container
