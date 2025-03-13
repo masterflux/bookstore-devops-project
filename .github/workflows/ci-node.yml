@@ -1,0 +1,52 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ 11.x ]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        services: [cartservice,catalogservice]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: backend/${{ matrix.service }}/package-lock.json
+      - working-directory: backend/${{ matrix.service }}
+        run: npm install
+      - working-directory: backend/${{ matrix.service }}
+        run: npm run build
+      - name: Log in to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and Push Docker image
+        run: |
+                  IMAGE_TAG=$(git rev-parse --short HEAD)
+                  docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ matrix.service }}-app:latest ${{ matrix.service }}-app
+                  docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ matrix.service }}-app:latest
+
+      - name: Archive Build Backend
+        uses: actions/upload-artifact@v4
+        with:
+         name: ${{ matrix.service }}-app-build
+         path: ${{ matrix.service }}-app/build
