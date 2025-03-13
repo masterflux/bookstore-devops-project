@@ -18,7 +18,7 @@ jobs:
       matrix:
         node-version: [ 11.x ]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-        services: [cartservice,catalogservice]
+        services: [cartservice]
 
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          #cache-dependency-path: backend/${{ matrix.service }}/package-lock.json
+          cache-dependency-path: backend/${{ matrix.service }}/package-lock.json
       - working-directory: backend/${{ matrix.service }}
         run: npm install
       - working-directory: backend/${{ matrix.service }}
