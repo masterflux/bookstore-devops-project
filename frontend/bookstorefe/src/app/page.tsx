@@ -15,9 +15,8 @@ interface Book {
 
 // Fetch books from our API layer
 async function getBooks(): Promise<Book[]> {
-  console.log('%cgetBooks11: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;');
   // Adjust the URL as needed; a relative URL works on the server side.
-  const res = await fetch('http://localhost:3000/api/books', { cache: 'no-store' })
+  const res = await fetch((process.env.url || 'http://localhost:3000') +'/api/books', { cache: 'no-store' })
   if (!res.ok) {
     // Optionally, add error handling here.
     return []

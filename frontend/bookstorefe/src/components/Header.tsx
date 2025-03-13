@@ -1,6 +1,7 @@
 // components/Header.tsx
 'use client'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function Header() {
     const router = useRouter()
@@ -27,14 +28,14 @@ export default function Header() {
                     <nav>
                         <ul className="flex space-x-4">
                             <li>
-                                <a href="#" className="hover:text-gray-200">
+                                <Link href="/" className="hover:text-gray-200">
                                     Home
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a href="#" className="hover:text-gray-200">
-                                    Categories
-                                </a>
+                                <Link href="/catalog" className="hover:text-gray-200">
+                                    Catalog
+                                </Link>
                             </li>
                             <li>
                                 <a href="#" className="hover:text-gray-200">
