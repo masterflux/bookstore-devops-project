@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../../context/AuthContext'
+import { useCart } from '../../context/CartContext'
 
 interface CartItem {
     id: number
+    bookId: number
     title: string
     author: string
     price: number
@@ -19,6 +21,7 @@ export default function CartPage() {
     const [totalAmount, setTotalAmount] = useState(0)
     const router = useRouter()
     const { isLoggedIn } = useAuth()
+    const { quantity, setQuantity, fetchCartQuantity } = useCart()
 
     // Fetch initial cart data
     useEffect(() => {
@@ -52,11 +55,16 @@ export default function CartPage() {
 
         setCart(updatedCart)
         calculateTotal(updatedCart)
+        const totalQuantity = updatedCart.reduce((sum: any, item: any) => sum + item.quantity, 0);
+        setQuantity(totalQuantity)
 
-        await fetch(`/api/cart/${id}`, {
+        await fetch(`http://localhost:3002/cart/${updatedCart.find((item) => item.id === id)?.bookId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ quantity: updatedCart.find((item) => item.id === id)?.quantity }),
+            body: JSON.stringify({
+                quantity: updatedCart.find((item) => item.id === id)?.quantity,
+                userId: sessionStorage.getItem('token')
+            }),
         })
     }
 
@@ -67,9 +75,10 @@ export default function CartPage() {
     }
 
     const clearCart = async () => {
-        await fetch('/api/cart/clear', { method: 'POST' })
+        await fetch('http://localhost:3002/cart/clear/' + sessionStorage.getItem('token'), { method: 'DELETE' })
         setCart([])
         setTotalAmount(0)
+        setQuantity(0)
     }
 
     return (

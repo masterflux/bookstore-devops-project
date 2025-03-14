@@ -25,8 +25,8 @@ export class CartController {
     return this.cartService.removeCartItem(userId, bookId);
   }
 
-  @Delete('/clear')
-  clearCart(@Body('userId') userId: string) {
+  @Delete('/clear/:userId')
+  clearCart(@Param('userId') userId: string) {
     return this.cartService.clearCart(userId);
   }
 }
