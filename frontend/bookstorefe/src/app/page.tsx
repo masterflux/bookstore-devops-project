@@ -1,7 +1,6 @@
 // app/page.tsx
 import HeroSection from '../components/HeroSection'
 import { BookCard } from '../components/BookCard'
-
 export const revalidate = 60
 
 interface Book {
@@ -10,7 +9,7 @@ interface Book {
   author: string
   description: string
   price: number
-  image: string
+  imageurl: string
 }
 
 // Fetch books from our API layer

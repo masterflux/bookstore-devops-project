@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Cart } from './cart/cart.entity';
-import { Book } from './book.entity';
+import { Book } from './cart/book.entity';
+import { User } from './user/user.entity';
 import { CartService } from './cart/cart.service';
 import { CartController } from './cart/cart.controller';
+import { UserService } from './user/user.service';
+import { AuthService } from './user/auth.service';
+import { AuthController } from './user/auth.controller';
 
 @Module({
     imports: [
@@ -14,15 +18,15 @@ import { CartController } from './cart/cart.controller';
             username: 'bookstore_admin',
             password: 'NewSecurePassword123!',
             database: 'postgres',
-            entities: [Cart, Book],
+            entities: [Cart, Book, User],
             synchronize: false,
             ssl: {
-                rejectUnauthorized: false, // 临时禁用证书验证（生产环境要用更安全的方式）
+                rejectUnauthorized: false,
             },
         }),
-        TypeOrmModule.forFeature([Cart, Book]),
+        TypeOrmModule.forFeature([Cart, Book, User]),
     ],
-    controllers: [CartController],
-    providers: [CartService],
+    controllers: [AuthController, CartController],
+    providers: [UserService, AuthService, CartService],
 })
 export class AppModule { }

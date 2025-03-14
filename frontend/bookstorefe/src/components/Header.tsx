@@ -1,32 +1,34 @@
-// components/Header.tsx
 'use client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useAuth } from '../components/AuthContext'
+import GlobeImage from '../../public/globe.svg'
+import AvatarImage from '../../public/images/avatar.svg'
+import Image from 'next/image'
+
 
 export default function Header() {
     const router = useRouter()
+    const { isLoggedIn, login, logout } = useAuth()
 
     const handleLogin = () => {
         router.push('/login')
     }
+    const handleLogout = () => {
+        logout()
+    }
 
     const handleCart = () => {
-        // For demonstration, check for a token in localStorage.
-        const token = localStorage.getItem('token')
-        if (token) {
-            router.push('/cart')
-        } else {
-            router.push('/login')
-        }
+        router.push('/cart')
     }
 
     return (
         <header className="bg-gradient-to-r from-blue-700 to-purple-700 text-white p-4 shadow-md">
             <div className="container mx-auto flex items-center justify-between">
                 <div className="flex items-center space-x-8">
-                    <h1 className="text-5xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:text-white hover:scale-105 transition-all duration-300">
+                    <Link href="/" className="text-5xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:text-white hover:scale-105 transition-all duration-300">
                         Bookstore
-                    </h1>
+                    </Link>
                     <nav>
                         <ul className="flex space-x-4">
                             <li>
@@ -58,12 +60,36 @@ export default function Header() {
                     </nav>
                 </div>
                 <div className="flex items-center space-x-4">
-                    <button
-                        onClick={handleLogin}
-                        className="bg-transparent border border-white px-4 py-2 rounded hover:bg-white hover:text-blue-700 transition"
-                    >
-                        Login
-                    </button>
+                    {!isLoggedIn ? (
+                        <button
+                            onClick={handleLogin}
+                            className="bg-transparent border border-white px-4 py-2 rounded hover:bg-white hover:text-blue-700 transition"
+                        >
+                            Login
+                        </button>
+                    ) : (
+                        <button
+                            onClick={handleLogout}
+                            className="bg-transparent border border-white px-4 py-2 rounded hover:bg-white hover:text-blue-700 transition"
+                        >
+                            Logout
+                        </button>
+                    ) }
+                    {isLoggedIn ? (
+                        <Image
+                            src={AvatarImage}
+                            alt={"User Avatar"}
+                            objectFit="cover"  
+                            className="w-10 h-10 rounded-full border-2 border-white"  
+                        />
+                    ) : (
+                            <Image
+                                src={GlobeImage}
+                                alt={"User Avatar"}
+                                objectFit="cover"
+                                className="w-10 h-10 rounded-full border-2 border-white"
+                        />
+                    )}
                 </div>
             </div>
         </header>

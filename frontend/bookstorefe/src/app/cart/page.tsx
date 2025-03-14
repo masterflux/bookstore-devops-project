@@ -1,6 +1,7 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useAuth } from '../../components/AuthContext'
 
 interface CartItem {
     id: number
@@ -12,11 +13,10 @@ interface CartItem {
 export default function CartPage() {
     const router = useRouter()
     const [cartItems, setCartItems] = useState<CartItem[]>([])
+    const { isLoggedIn } = useAuth()
 
     useEffect(() => {
-        // Check for login status by verifying token existence.
-        const token = localStorage.getItem('token')
-        if (!token) {
+        if (!isLoggedIn) {
             router.push('/login')
         } else {
             // Simulate fetching cart items (empty for now).

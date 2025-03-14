@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cart } from './cart.entity';
-import { Book } from '../book.entity';
+import { Book } from './book.entity';
 
 
 @Injectable()
@@ -15,7 +15,6 @@ export class CartService {
 
   }
 
-  // 🛒 获取购物车详情
   async getCart(userId: string) {
     const cartItems = await this.cartRepo.find({ where: { userId } });
 
@@ -38,7 +37,6 @@ export class CartService {
     return detailedCart;
   }
 
-  // ➕ 添加到购物车
   async addToCart(userId: string, bookId: number, quantity: number) {
     const book = await this.bookRepo.findOne({ where: { id: bookId } });
 
@@ -53,7 +51,7 @@ export class CartService {
     return this.cartRepo.save(cartItem);
   }
 
-  // 🔄 更新购物车数量
+
   async updateCart(userId: string, bookId: number, quantity: number) {
     const cartItem = await this.cartRepo.findOne({ where: { userId, bookId } });
     if (!cartItem) throw new NotFoundException('Item not found in cart');
@@ -74,7 +72,6 @@ export class CartService {
     return { message: 'Cart updated' };
   }
 
-  // 🗑 移除购物车项
   async removeCartItem(userId: string, bookId: number) {
     const cartItem = await this.cartRepo.findOne({ where: { userId, bookId } });
     if (!cartItem) throw new NotFoundException('Item not found in cart');
@@ -90,7 +87,7 @@ export class CartService {
     return { message: 'Item removed from cart and stock restored' };
   }
 
-  // 🧹 清空购物车
+
   async clearCart(userId: string) {
     const cartItems = await this.cartRepo.find({ where: { userId } });
 

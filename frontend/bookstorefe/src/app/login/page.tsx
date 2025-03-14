@@ -1,19 +1,42 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '../../components/AuthContext'
 
 export default function LoginPage() {
   const router = useRouter()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const { isLoggedIn, login, logout } = useAuth()
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async  (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // Simulated login: if both fields are filled, store a dummy token and navigate.
-    if (username && password) {
-      localStorage.setItem('token', 'dummy-token')
-      router.push('/cart')
+    const loginfc = async (username: any, password: any) => {
+      try {
+        const response = await fetch('http://localhost:3002/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await response.json();
+        return data.success
+
+      } catch (error) {
+        console.error('Error during login:', error);
+      }
+    };
+
+    // 调用登录函数
+    const res = await loginfc(username, password);
+
+    if (res) {
+      login()
+      router.push('/');
     }
+
   }
 
   return (
