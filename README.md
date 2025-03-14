@@ -1,7 +1,7 @@
 # readme
 
 ## frontend 
-frontend code: This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+frontend code: This is a [Next.js](https://nextjs.org) project
 
 example dockerfile
 
@@ -15,8 +15,11 @@ CMD ["PORT=3000", "npm", "start"]
 ```
 ### frontend notice 
 should set up env:
+
 URL
+
 CATALOGURL
+
 CARTURL
 
 ## backend - catalog
