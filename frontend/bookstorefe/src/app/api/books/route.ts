@@ -11,7 +11,7 @@ export async function POST(req: NextResponse ) {
 export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const category = url.searchParams.get('category');
-    let backendUrl = process.env.catalogurl || 'http://localhost:3001';
+    let backendUrl = process.env.CATALOGURL || 'http://localhost:3001';
     if (category) {
         backendUrl += `/books/category/${category}`
     } else {
@@ -19,7 +19,6 @@ export async function GET(request: NextRequest) {
     }
     try {
         const backendRes = await fetch(backendUrl)
-        console.log('%cbackendRes: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;',backendRes);
         if (!backendRes.ok) {
             return new Response(JSON.stringify([]), {
                 status: 200,

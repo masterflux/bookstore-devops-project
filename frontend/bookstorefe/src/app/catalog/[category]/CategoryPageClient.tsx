@@ -26,7 +26,7 @@ export default function CategoryPageClient({
     useEffect(() => {
         if (!category) return;
 
-        fetch(`http://localhost:3000/api/books?category=${category}`, {
+        fetch((process.env.URL || 'http://localhost:3000' ) + `/api/books?category=${category}`, {
             cache: "no-store",
         })
             .then((res) => res.json())

@@ -63,21 +63,16 @@ export class CartService {
 
   async updateCart(userId: string, bookId: number, quantity: number) {
     const cartItem = await this.cartRepo.findOne({ where: { userId, bookId } });
-    console.log('%ccartItem: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;',cartItem);
     if (!cartItem) throw new NotFoundException('Item not found in cart');
 
     const book = await this.bookRepo.findOne({ where: { id: bookId } });
-    console.log('%cbook: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;',book);
 
     if (!book || book.stock + cartItem.quantity < quantity) {
       throw new BadRequestException(`Insufficient stock, current stock: ${book?.stock}`);
     }
 
     const stockAdjustment = quantity - cartItem.quantity;
-    console.log('%cquantity: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;',quantity);
-    console.log('%cstockAdjustment: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;',stockAdjustment);
     book.stock -= stockAdjustment;
-    console.log('%cbook.stock: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;',book.stock);
     await this.bookRepo.save(book);
 
     cartItem.quantity = quantity;

@@ -64,14 +64,13 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
     const fetchCartQuantity = useCallback(async (userId:string|null) => {
         try {
-            const res = await fetch('http://localhost:3002/cart/' + userId, {
+            const res = await fetch((process.env.CARTURL || 'http://localhost:3002') + '/cart/' + userId, {
                 method: 'GET',
             })
             if (!res.ok) {
                 throw new Error('Failed to fetch cart quantity')
             }
             const data = await res.json();
-            console.log('%cdata: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;',data);
             const totalQuantity = data.reduce((sum:any, item:any) => sum + item.quantity, 0);
             dispatch({ type: 'SET_QUANTITY', payload: totalQuantity })
         } catch (error) {
