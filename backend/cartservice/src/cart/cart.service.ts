@@ -47,9 +47,16 @@ export class CartService {
     book.stock -= quantity;
     await this.bookRepo.save(book);
 
-    const cartItem = this.cartRepo.create({ userId, bookId, quantity });
-    return this.cartRepo.save(cartItem);
+    const existingCartItem = await this.cartRepo.findOne({ where: { userId, bookId } });
+    if (existingCartItem) {
+      existingCartItem.quantity += quantity;
+      return await this.cartRepo.save(existingCartItem);
+    } else {
+      const cartItem = this.cartRepo.create({ userId, bookId, quantity });
+      return await this.cartRepo.save(cartItem);
+    }
   }
+
 
 
   async updateCart(userId: string, bookId: number, quantity: number) {

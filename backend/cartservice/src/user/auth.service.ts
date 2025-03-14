@@ -5,8 +5,8 @@ import { UserService } from './user.service';
 export class AuthService {
     constructor(private readonly userService: UserService) { }
 
-    async login(username: string, password: string): Promise<boolean> {
-        const isValid = await this.userService.validateUser(username, password);
-        return isValid;
+    async login(username: string, password: string): Promise<{ isPasswordValid: boolean; userId?: number; }> {
+        const res = await this.userService.validateUser(username, password);
+        return res;
     }
 }

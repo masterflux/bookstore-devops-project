@@ -25,17 +25,23 @@ export class UserService {
         }
     }
 
-    async validateUser(username: string, password: string): Promise<boolean> {
+    async validateUser(username: string, password: string): Promise<{ isPasswordValid: boolean; userId?: number; }> {
         try {
             const user = await this.findByUsername(username);
+            console.log('%cuser: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;',user);
             if (!user) {
                 console.log('User not found');
-                return false; 
+                return {
+                    isPasswordValid: false
+                }; 
             }
 
 
             const isPasswordValid = await bcrypt.compare(password, user.password);
-            return isPasswordValid; 
+            return {
+                isPasswordValid,
+                userId: user.id
+            }; 
         } catch (error) {
             console.error('Error in validateUser:', error);
             throw new Error('Unable to validate user');

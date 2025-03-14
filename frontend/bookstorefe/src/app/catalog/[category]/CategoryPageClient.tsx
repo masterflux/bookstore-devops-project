@@ -2,11 +2,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { BookCard } from "../../../components/BookCard";
 
 interface Book {
-    id: number;
-    title: string;
-    author: string;
+    id: number
+    title: string
+    author: string
+    description: string
+    price: number
+    imageurl: string
 }
 
 interface CategoryPageClientProps {
@@ -51,10 +55,7 @@ export default function CategoryPageClient({
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {books.map((book) => (
-                    <div key={book.id} className="bg-white p-4 rounded shadow">
-                        <h2 className="text-2xl font-semibold">{book.title}</h2>
-                        <p className="text-gray-600">by {book.author}</p>
-                    </div>
+                    <BookCard key={book.id} book={book} />
                 ))}
             </div>
         </div>

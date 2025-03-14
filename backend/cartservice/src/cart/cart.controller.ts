@@ -5,8 +5,8 @@ import { CartService } from './cart.service';
 export class CartController {
   constructor(private readonly cartService: CartService) { }
 
-  @Get()
-  getCart(@Body('userId') userId: string) {
+  @Get(':userId')
+  getCart(@Param('userId') userId: string) {
     return this.cartService.getCart(userId);
   }
 

@@ -32,6 +32,7 @@ interface CartContextType {
     increment: () => void
     decrement: () => void
     setQuantity: (quantity: number) => void
+    fetchCartQuantity: (userId: string | null) => Promise<void>
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -57,14 +58,29 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     const increment = useCallback(() => dispatch({ type: 'INCREMENT' }), [])
     const decrement = useCallback(() => dispatch({ type: 'DECREMENT' }), [])
 
-    const setQuantity = useCallback(throttle((quantity: number) => {
+    const setQuantity = useCallback((quantity: number) => {
         dispatch({ type: 'SET_QUANTITY', payload: quantity })
-        // Call backend to update quantity here
-        console.log(`Update backend with quantity: ${quantity}`)
-    }, 500), [])
+    }, [])
+
+    const fetchCartQuantity = useCallback(async (userId:string|null) => {
+        try {
+            const res = await fetch('http://localhost:3002/cart/' + userId, {
+                method: 'GET',
+            })
+            if (!res.ok) {
+                throw new Error('Failed to fetch cart quantity')
+            }
+            const data = await res.json();
+            console.log('%cdata: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;',data);
+            const totalQuantity = data.reduce((sum:any, item:any) => sum + item.quantity, 0);
+            dispatch({ type: 'SET_QUANTITY', payload: totalQuantity })
+        } catch (error) {
+            console.error('Error fetching cart quantity:', error)
+        }
+    }, [])
 
     return (
-        <CartContext.Provider value={{ quantity: state.quantity, increment, decrement, setQuantity }}>
+        <CartContext.Provider value={{ quantity: state.quantity, increment, decrement, setQuantity, fetchCartQuantity }}>
             {children}
         </CartContext.Provider>
     )

@@ -1,4 +1,5 @@
 'use client'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '../components/AuthContext'
@@ -11,18 +12,22 @@ import Image from 'next/image'
 export default function Header() {
     const router = useRouter()
     const { isLoggedIn, login, logout } = useAuth()
-    const { quantity } = useCart()
+    const { quantity, setQuantity, fetchCartQuantity } = useCart()
 
     const handleLogin = () => {
         router.push('/login')
     }
     const handleLogout = () => {
         logout()
+        setQuantity(0)
     }
 
     const handleCart = () => {
         router.push('/cart')
     }
+    useEffect(() => {
+        isLoggedIn && fetchCartQuantity(sessionStorage.getItem('token'))
+    }, [isLoggedIn])
 
     return (
         <header className="bg-gradient-to-r from-blue-700 to-purple-700 text-white p-4 shadow-md">

@@ -26,7 +26,6 @@ async function getBooks(): Promise<Book[]> {
 
 export default async function Home() {
   const books = await getBooks()
-  console.log('%cbooks: ','color: MidnightBlue; background: Aquamarine; font-size: 20px;',books);
 
   return (
     <>

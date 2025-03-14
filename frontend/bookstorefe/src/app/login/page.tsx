@@ -22,7 +22,7 @@ export default function LoginPage() {
         });
 
         const data = await response.json();
-        return data.success
+        return data
 
       } catch (error) {
         console.error('Error during login:', error);
@@ -30,10 +30,10 @@ export default function LoginPage() {
     };
 
     // 调用登录函数
-    const res = await loginfc(username, password);
+    const { success, userId } = await loginfc(username, password);
 
-    if (res) {
-      login()
+    if (success) {
+      login(userId)
       router.push('/');
     }
 

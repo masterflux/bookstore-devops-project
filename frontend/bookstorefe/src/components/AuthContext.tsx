@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 
 interface AuthContextType {
     isLoggedIn: boolean
-    login: () => void
+    login: (userId: any) => void
     logout: () => void
 }
 
@@ -24,9 +24,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
     }, [])
 
-    const login = () => {
+    const login = (userId: any) => {
         setIsLoggedIn(true)
-        sessionStorage.setItem('token', 'logined')
+        sessionStorage.setItem('token', userId)
     }
 
     const logout = () => {
