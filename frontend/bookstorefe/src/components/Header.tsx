@@ -2,6 +2,7 @@
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '../components/AuthContext'
+import { useCart } from '../components/CartContext'
 import GlobeImage from '../../public/globe.svg'
 import AvatarImage from '../../public/images/avatar.svg'
 import Image from 'next/image'
@@ -10,6 +11,7 @@ import Image from 'next/image'
 export default function Header() {
     const router = useRouter()
     const { isLoggedIn, login, logout } = useAuth()
+    const { quantity } = useCart()
 
     const handleLogin = () => {
         router.push('/login')
@@ -32,18 +34,23 @@ export default function Header() {
                     <nav>
                         <ul className="flex space-x-4">
                             <li>
-                                <Link href="/" className="hover:text-gray-200">
+                                <Link href="/" className="font-bold hover:text-gray-200">
                                     Home
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/catalog" className="hover:text-gray-200">
+                                <Link href="/catalog" className="font-bold hover:text-gray-200">
                                     Catalog
                                 </Link>
                             </li>
                             <li>
-                                <a href="#" onClick={handleCart} className="hover:text-gray-200">
+                                <a href="#" onClick={handleCart} className="font-bold hover:text-gray-200 relative">
                                     Cart
+                                    {quantity > 0 && (
+                                        <span className="absolute top-[-12px] right-[-23px] bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                                            {quantity}
+                                        </span>
+                                    )}
                                 </a>
                             </li>
                             {/* <li>
