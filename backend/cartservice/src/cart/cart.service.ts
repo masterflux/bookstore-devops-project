@@ -27,8 +27,9 @@ export class CartService {
           id: item.id,
           title: book.title,
           author: book.author,
-          price: book.price,
           quantity: item.quantity,
+          stock: book.stock,
+          price: book.price,
           totalPrice: item.quantity * book.price,
         };
       }),

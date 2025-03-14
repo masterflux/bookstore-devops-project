@@ -2,8 +2,8 @@
 import Image from 'next/image'
 import BlankImage from '../../public/images/Books.svg'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '../components/AuthContext'
-import { useCart } from '../components/CartContext'
+import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
 
 interface Book {
     id: number

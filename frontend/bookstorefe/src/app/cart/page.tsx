@@ -1,45 +1,128 @@
 'use client'
+
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { useAuth } from '../../components/AuthContext'
+import { useAuth } from '../../context/AuthContext'
 
 interface CartItem {
     id: number
     title: string
-    quantity: number
+    author: string
     price: number
+    quantity: number
+    totalPrice: number
+    stock: number
 }
 
 export default function CartPage() {
+    const [cart, setCart] = useState<CartItem[]>([])
+    const [totalAmount, setTotalAmount] = useState(0)
     const router = useRouter()
-    const [cartItems, setCartItems] = useState<CartItem[]>([])
     const { isLoggedIn } = useAuth()
 
+    // Fetch initial cart data
     useEffect(() => {
         if (!isLoggedIn) {
             router.push('/login')
         } else {
-            // Simulate fetching cart items (empty for now).
-            setCartItems([])
+            fetch('http://localhost:3002/cart/' + sessionStorage.getItem('token'), {
+                method: 'GET',
+            }).then((res) => res.json())
+                .then((data) => {
+                    console.log('%cdata: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', data);
+                    setCart(data)
+                    calculateTotal(data)
+                })
         }
-    }, [router])
+    }, [])
+
+
+    // Update quantity
+    const updateQuantity = async (id: number, change: number) => {
+        const updatedCart = cart.map((item) => {
+            if (item.id === id) {
+                const newQuantity = item.quantity + change
+                if (newQuantity > 0 && newQuantity <= item.stock) {
+                    item.quantity = newQuantity
+                    item.totalPrice = item.quantity * item.price
+                }
+            }
+            return item
+        })
+
+        setCart(updatedCart)
+        calculateTotal(updatedCart)
+
+        await fetch(`/api/cart/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ quantity: updatedCart.find((item) => item.id === id)?.quantity }),
+        })
+    }
+
+    // Calculate total amount
+    const calculateTotal = (items: CartItem[]) => {
+        const total = items.reduce((sum, item) => sum + item.totalPrice, 0)
+        setTotalAmount(total)
+    }
+
+    const clearCart = async () => {
+        await fetch('/api/cart/clear', { method: 'POST' })
+        setCart([])
+        setTotalAmount(0)
+    }
 
     return (
-        <div className="min-h-screen bg-gray-100 py-8">
-            <div className="container mx-auto px-4">
-                <h2 className="text-3xl font-bold mb-6 text-center">Your Cart</h2>
-                {cartItems.length === 0 ? (
+        <div className="min-h-screen bg-gray-100 p-6 flex justify-center">
+            <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-3xl">
+                <div className="absolute t-4 l-4  flex justify-center">
+                    <button
+                        onClick={clearCart}
+                        className="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600">
+                        Clear Cart
+                    </button>
+                </div>
+                <h1 className="text-2xl font-bold mb-6 text-center">Shopping Cart</h1>
+
+                {cart.length === 0 ? (
                     <p className="text-center text-gray-600">Your cart is empty.</p>
                 ) : (
-                    <div className="space-y-4">
-                        {cartItems.map((item) => (
-                            <div key={item.id} className="p-4 bg-white rounded shadow">
-                                <h3 className="text-xl font-bold">{item.title}</h3>
-                                <p>
-                                    Quantity: {item.quantity} | Price: ${item.price}
-                                </p>
+                    <div>
+                        {cart.map((item) => (
+                            <div key={item.id} className="flex items-center justify-between border-b py-4">
+                                <div>
+                                    <h2 className="text-lg font-semibold text-gray-900">{item.title}</h2>
+                                    <p className="text-gray-600 text-sm">by {item.author}</p>
+                                    <p className="text-gray-800 font-medium">${item.price.toFixed(2)} each</p>
+                                    <p className="text-sm text-gray-500">Stock: {item.stock}</p>
+                                </div>
+                                <div className="flex items-center space-x-4">
+                                    <button
+                                        onClick={() => updateQuantity(item.id, -1)}
+                                        disabled={item.quantity <= 1}
+                                        className="px-3 py-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+                                    >
+                                        −
+                                    </button>
+                                    <span className="text-lg font-semibold">{item.quantity}</span>
+                                    <button
+                                        onClick={() => updateQuantity(item.id, 1)}
+                                        disabled={item.quantity >= item.stock}
+                                        className="px-3 py-1 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+                                    >
+                                        +
+                                    </button>
+                                </div>
                             </div>
                         ))}
+
+                        <div className="mt-6 flex justify-between items-center">
+                            <h2 className="text-xl font-bold">Total: ${totalAmount.toFixed(2)}</h2>
+                            <button className="bg-blue-600 text-white px-6 py-2 rounded shadow hover:bg-blue-700">
+                                Checkout
+                            </button>
+                        </div>
+
                     </div>
                 )}
             </div>

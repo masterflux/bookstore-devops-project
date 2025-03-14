@@ -2,8 +2,8 @@
 import './globals.css'
 import { ReactNode } from 'react'
 import Header from '@/components/Header'
-import { AuthProvider } from '../components/AuthContext'
-import { CartProvider } from '../components/CartContext'
+import { AuthProvider } from '../context/AuthContext'
+import { CartProvider } from '../context/CartContext'
 
 export const metadata = {
   title: 'Bookstore',
