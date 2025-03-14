@@ -1,8 +1,3 @@
-## CICD
-run **npm run build** to build your application. Finally, run **npm run start** to start the Node.js server. This server supports all Next.js features.
-
-
-
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

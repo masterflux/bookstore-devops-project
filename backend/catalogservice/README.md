@@ -1,11 +1,3 @@
-# CICD
-npm install
-npm start
-
-
-
-
-
 # Bookstore Catalog Service
 
 This is the catalog service for the bookstore application, built with **Express.js** and **PostgreSQL**.

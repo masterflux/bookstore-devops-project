@@ -20,6 +20,7 @@ export default function Header() {
     const handleLogout = () => {
         logout()
         setQuantity(0)
+        router.push('/login')
     }
 
     const handleCart = () => {
