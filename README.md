@@ -11,8 +11,13 @@ cd frontend/bookstorefe
 RUN npm install --omit=dev
 RUN npm build
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["PORT=3000", "npm", "start"]
 ```
+### frontend notice 
+should set up env:
+URL
+CATALOGURL
+CARTURL
 
 ## backend - catalog
 use expresjs based on Nodejs  (https://github.com/expressjs/express)
@@ -26,6 +31,7 @@ RUN npm install --omit=dev
 EXPOSE 3001
 CMD ["node", "index.js"]
 ```
+If you want to custom port, just set env PORT=xxx
 
 ## backend - cart and user
 use nestjs based on Nodejs  (https://github.com/nestjs/nest)
@@ -40,3 +46,4 @@ RUN npm build
 EXPOSE 3002
 CMD ["node", "dist/main"]
 ```
+If you want to custom port, just set env PORT=xxx

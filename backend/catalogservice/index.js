@@ -3,7 +3,7 @@ const cors = require('cors');
 const { Pool } = require('pg');
 
 const app = express();
-// const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -49,7 +49,7 @@ app.get('/books/category/:category', async (req, res) => {
     }
 });
 
-app.listen(3001, () => {
+app.listen(port, () => {
     console.log(`Server running on http://localhost:3001`);
 });
 
