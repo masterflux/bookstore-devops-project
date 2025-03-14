@@ -14,7 +14,7 @@ EXPOSE 3000
 CMD ["PORT=3000", "npm", "start"]
 ```
 ### frontend notice 
-should set up env:
+**should set up env:**
 
 URL
 
@@ -34,7 +34,7 @@ RUN npm install --omit=dev
 EXPOSE 3001
 CMD ["node", "index.js"]
 ```
-If you want to custom port, just set env PORT=xxx
+If you want to custom port, just set env PORT=xxx like `CMD ["PORT=3001", "node", "index.js"]`
 
 ## backend - cart and user
 use nestjs based on Nodejs  (https://github.com/nestjs/nest)
@@ -49,4 +49,5 @@ RUN npm build
 EXPOSE 3002
 CMD ["node", "dist/main"]
 ```
-If you want to custom port, just set env PORT=xxx
+If you want to custom port, just set env PORT=xxx like `CMD ["PORT=3002", "node", "dist/main"]`
+
