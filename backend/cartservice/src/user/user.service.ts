@@ -9,7 +9,10 @@ export class UserService {
     constructor(
         @InjectRepository(User) private userRepository: Repository<User>,
     ) {    
-        
+        // bcrypt.hash('2', 10, (err, hash) => {
+        //     if (err) throw err;
+        //     console.log('Hashed password:', hash);
+        // });
     }
 
 
@@ -29,6 +32,7 @@ export class UserService {
                 console.log('User not found');
                 return false; 
             }
+
 
             const isPasswordValid = await bcrypt.compare(password, user.password);
             return isPasswordValid; 
