@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend-container
+        image: booksstoreaksregistry.azurecr.io/frontend:v1  # Update tag as needed
+        ports:
+        - containerPort: 3000
+        env:
+        - name: CATALOG_URL
+          value: "http://catalogservice:3001"
+        - name: CART_URL
+          value: "http://cartservice:3002"
