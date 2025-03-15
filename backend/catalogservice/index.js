@@ -43,9 +43,9 @@ app.get('/books/category/:category', async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'No books found in this category' });
         }
-        res.json(result.rows);
+        return res.json(result.rows);
     } catch (err) {
-        res.status(500).json({ error: 'Server error' });
+        return res.status(500).json({ error: 'Server error' });
     }
 });
 

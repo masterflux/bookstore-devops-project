@@ -1,7 +1,3 @@
-// app/catalog/[category]/CategoryPageClient.tsx
-"use client";
-
-import { useEffect, useState } from "react";
 import { BookCard } from "../../../components/BookCard";
 
 interface Book {
@@ -17,35 +13,25 @@ interface CategoryPageClientProps {
     category: string;
 }
 
-export default function CategoryPageClient({
+// Fetch books from our API layer
+async function getBooks(category:string): Promise<Book[]> {
+    // Adjust the URL as needed; a relative URL works on the server side.
+    const res = await fetch((process.env.URL || 'http://localhost:3000') + `/api/books?category=${category}`, {
+        cache: "no-store",
+    })
+    if (!res.ok) {
+        return [];
+    }
+    return res.json()
+}
+
+export default async function CategoryPageClient({
     category,
 }: CategoryPageClientProps) {
-    const [books, setBooks] = useState<Book[]>([]);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (!category) return;
-
-        fetch((process.env.URL || 'http://localhost:3000') + `/api/books?category=${category}`, {
-            cache: "no-store",
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setBooks(data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching books: ", error);
-                setLoading(false);
-            });
-    }, [category]);
-
-    if (loading) {
-        return (
-            <div className="p-8 bg-gray-50 min-h-screen flex items-center justify-center">
-                <p className="text-2xl">Loading...</p>
-            </div>
-        );
+    let books: Book[] = [];
+    if (category) {
+        books = await getBooks(category)
     }
 
     return (
@@ -54,7 +40,7 @@ export default function CategoryPageClient({
                 {category.charAt(0).toUpperCase() + category.slice(1)} Books
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {books.map((book) => (
+                {books.map((book: Book) => (
                     <BookCard key={book.id} book={book} />
                 ))}
             </div>
