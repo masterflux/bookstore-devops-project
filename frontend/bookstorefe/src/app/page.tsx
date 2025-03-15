@@ -15,8 +15,7 @@ interface Book {
 // Fetch books from our API layer
 async function getBooks(): Promise<Book[]> {
   // Adjust the URL as needed; a relative URL works on the server side.
-  const res = await fetch('/api/books', { cache: 'no-store' })
-  if (!res.ok) {
+  const res = await fetch((process.env.URL || 'http://localhost:3000') + '/api/books', { cache: 'no-store' })  if (!res.ok) {
     // Optionally, add error handling here.
     return []
   }
