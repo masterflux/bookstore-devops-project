@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogservice
+  namespace: bookstore
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: catalogservice
+  template:
+    metadata:
+      labels:
+        app: catalogservice
+    spec:
+      containers:
+        - name: catalogservice
+          image: bookstorencl.azurecr.io/catalogservice:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
