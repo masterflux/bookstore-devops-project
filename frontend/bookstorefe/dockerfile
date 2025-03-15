@@ -1,0 +1,25 @@
+# Build stage
+FROM node:18-alpine as builder
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+RUN npm install
+
+# Copy all source code
+COPY . .
+
+# Build Next.js for production
+RUN npm run build
+
+# Production stage
+FROM node:18-alpine
+WORKDIR /app
+
+# Copy compiled build from builder
+COPY --from=builder /app ./
+
+# Next.js typically listens on port 3000
+EXPOSE 3000
+
+CMD ["npm", "run", "start"]

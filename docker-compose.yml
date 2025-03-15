@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+
+  frontend:
+    build:
+      context: ./frontend/bookstorefe
+      dockerfile: Dockerfile
+    container_name: bookstore-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - CATALOG_URL=http://catalogservice:3001
+      - CART_URL=http://cartservice:3002
+
+  cartservice:
+    build:
+      context: ./backend/cartservice
+      dockerfile: Dockerfile
+    container_name: cartservice
+    ports:
+      - "3002:3002"
+    # environment:
+    #   - ANY_ENV=your_value
+    # If you have a DB, add environment variables here
+
+  catalogservice:
+    build:
+      context: ./backend/catalogservice
+      dockerfile: Dockerfile
+    container_name: catalogservice
+    ports:
+      - "3001:3001"

@@ -1,0 +1,22 @@
+FROM node:18-alpine
+
+# Create app directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy all source code
+COPY . .
+
+# Build NestJS (compiles TypeScript)
+RUN npm run build
+
+# Expose the port (Nest default is 3000, but let's pick 3001 for local)
+EXPOSE 3002
+
+# Start the NestJS app in production mode
+CMD ["npm", "run", "start:prod"]

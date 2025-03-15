@@ -1,0 +1,19 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy all source code
+COPY . .
+
+# If your catalog service listens on port 3002, do:
+EXPOSE 3001
+
+# If there's a build step, add it here (e.g., `RUN npm run build`)
+# Otherwise, if it's just plain JS, no build step is needed.
+
+CMD ["node", "index.js"]
