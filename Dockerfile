@@ -66,7 +66,7 @@ COPY --from=catalogservice-builder /app/backend/catalogservice /app/backend/cata
 # Copy built cartservice from cartservice-builder
 COPY --from=cartservice-builder /app/backend/cartservice /app/backend/cartservice
 
-# Install frontend dependencies (required for `npm start`)
+# Install frontend dependencies
 WORKDIR /app/frontend
 RUN npm install --production
 
