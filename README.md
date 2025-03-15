@@ -17,9 +17,9 @@ CMD ["PORT=3000", "npm", "start"]
 **should set up env:**
 URL
 
-CATALOGURL
+CATALOG_URL
 
-CARTURL
+CART_URL
 
 ## backend - catalog
 use expresjs based on Nodejs  (https://github.com/expressjs/express)
