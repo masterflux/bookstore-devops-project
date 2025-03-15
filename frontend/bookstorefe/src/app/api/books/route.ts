@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
                 headers: { 'Content-Type': 'application/json' },
             })
     } catch (error) {
-        return new Response(JSON.stringify({ error: 'Failed to fetch books' }), { status: 500 })
+        console.log(error);
+        return new Response(JSON.stringify([]), { status: 500 })
     }
 }

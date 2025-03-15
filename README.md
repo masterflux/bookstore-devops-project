@@ -16,8 +16,6 @@ CMD ["PORT=3000", "npm", "start"]
 ### frontend notice 
 **should set up env:**
 
-URL
-
 CATALOGURL
 
 CARTURL
