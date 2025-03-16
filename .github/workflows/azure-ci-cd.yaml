@@ -17,6 +17,14 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set AKS Context
+        run: az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTER }}
+
       # Log in to ACR
       - name: Log in to ACR
         run: |
@@ -47,14 +55,6 @@ jobs:
           docker build -t ${{ env.ACR_NAME }}.azurecr.io/frontend:${IMAGE_TAG} \
             -f frontend/bookstorefe/Dockerfile frontend/bookstorefe
           docker push ${{ env.ACR_NAME }}.azurecr.io/frontend:${IMAGE_TAG}
-
-      # Set AKS context
-      - name: Set AKS context
-        uses: Azure/aks-set-context@v2
-        with:
-          credentials: ${{ secrets.AZURE_CREDENTIALS }}
-          resource-group: ${{ env.RESOURCE_GROUP }}
-          cluster-name: ${{ env.AKS_CLUSTER }}
 
       # Update cartservice deployment
       - name: Update cartservice
