@@ -3,6 +3,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../../context/AuthContext'
 
+// Optionally, if you prefer using runtime config:
+import getConfig from 'next/config'
+const { publicRuntimeConfig } = getConfig()
+const CART_URL = publicRuntimeConfig.NEXT_PUBLIC_CART_URL
+
 export default function LoginPage() {
   const router = useRouter()
   const [username, setUsername] = useState('')
@@ -11,9 +16,11 @@ export default function LoginPage() {
 
   const handleSubmit = async  (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    const cartUrl = process.env.NEXT_PUBLIC_CART_URL;
     const loginfc = async (username: any, password: any) => {
       try {
-        const response = await fetch((process.env.NEXT_PUBLIC_CART_URL || 'http://localhost:3002') + '/auth/login', {
+        const response = await fetch((cartUrl || 'http://localhost:3002') + '/auth/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
