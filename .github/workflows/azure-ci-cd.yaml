@@ -55,6 +55,10 @@ jobs:
           docker build -t ${{ env.ACR_NAME }}.azurecr.io/frontend:${IMAGE_TAG} \
             -f frontend/bookstorefe/Dockerfile frontend/bookstorefe
           docker push ${{ env.ACR_NAME }}.azurecr.io/frontend:${IMAGE_TAG}
+          
+      - name: Apply Kubernetes Manifests
+        run: |
+          kubectl apply -f k8s-manifests/
 
       # Update cartservice deployment
       - name: Update cartservice
