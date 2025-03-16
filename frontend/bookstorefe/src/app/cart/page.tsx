@@ -28,7 +28,7 @@ export default function CartPage() {
         if (!isLoggedIn) {
             router.push('/login')
         } else {
-            fetch((process.env.CART_URL || 'http://localhost:3002') + '/cart/' + sessionStorage.getItem('token'), {
+            fetch((process.env.NEXT_PUBLIC_CART_URL || 'http://localhost:3002') + '/cart/' + sessionStorage.getItem('token'), {
                 method: 'GET',
             }).then((res) => res.json())
                 .then((data) => {
@@ -57,7 +57,7 @@ export default function CartPage() {
         const totalQuantity = updatedCart.reduce((sum: any, item: any) => sum + item.quantity, 0);
         setQuantity(totalQuantity)
 
-        await fetch((process.env.CART_URL || 'http://localhost:3002') + `/cart/${updatedCart.find((item) => item.id === id)?.bookId}`, {
+        await fetch((process.env.NEXT_PUBLIC_CART_URL || 'http://localhost:3002') + `/cart/${updatedCart.find((item) => item.id === id)?.bookId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -74,7 +74,7 @@ export default function CartPage() {
     }
 
     const clearCart = async () => {
-        await fetch((process.env.CART_URL || 'http://localhost:3002') + '/cart/clear/' + sessionStorage.getItem('token'), { method: 'DELETE' })
+        await fetch((process.env.NEXT_PUBLIC_CART_URL || 'http://localhost:3002') + '/cart/clear/' + sessionStorage.getItem('token'), { method: 'DELETE' })
         setCart([])
         setTotalAmount(0)
         setQuantity(0)

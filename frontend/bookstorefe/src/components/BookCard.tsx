@@ -31,7 +31,7 @@ export function BookCard({ book }: BookCardProps) {
         }
 
         try {
-            const response = await fetch((process.env.CART_URL || 'http://localhost:3002') + '/cart', {
+            const response = await fetch((process.env.NEXT_PUBLIC_CART_URL || 'http://localhost:3002') + '/cart', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

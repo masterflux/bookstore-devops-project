@@ -11,7 +11,7 @@ export async function POST(req: NextResponse) {
 export async function GET(request: NextRequest) {
     try {
         const category = request.url.split('?')[1]?.split('category=')[1];
-        let backendUrl = process.env.CATALOG_URL || 'http://localhost:3001';
+        let backendUrl = process.env.NEXT_PUBLIC_CATALOG_URL || 'http://localhost:3001';
         if (category) {
             backendUrl += `/books/category/${category}`
         } else {
