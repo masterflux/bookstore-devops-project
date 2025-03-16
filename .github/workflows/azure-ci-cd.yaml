@@ -6,8 +6,8 @@ on:
 
 env:
   ACR_NAME: BooksStoreAKSregistry       # Your ACR name (without .azurecr.io)
-  RESOURCE_GROUP: BookStoreGroup
-  AKS_CLUSTER: BookStoreAKS
+  RESOURCE_GROUP: BooksStoreGroup
+  AKS_CLUSTER: BooksStoreAKS
 
 jobs:
   build-and-deploy:
