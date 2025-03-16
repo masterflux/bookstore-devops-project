@@ -1,0 +1,75 @@
+name: Build and Deploy to AKS
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  ACR_NAME: BooksStoreAKSregistry       # Your ACR name (without .azurecr.io)
+  RESOURCE_GROUP: BookStoreGroup
+  AKS_CLUSTER: BookStoreAKS
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # Log in to ACR
+      - name: Log in to ACR
+        run: |
+          echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ env.ACR_NAME }}.azurecr.io \
+            --username "${{ secrets.ACR_USERNAME }}" \
+            --password-stdin
+
+      # Build and push cartservice
+      - name: Build and push cartservice
+        run: |
+          IMAGE_TAG=$(git rev-parse --short HEAD)
+          docker build -t ${{ env.ACR_NAME }}.azurecr.io/cartservice:${IMAGE_TAG} \
+            -f backend/cartservice/Dockerfile backend/cartservice
+          docker push ${{ env.ACR_NAME }}.azurecr.io/cartservice:${IMAGE_TAG}
+
+      # Build and push catalogservice
+      - name: Build and push catalogservice
+        run: |
+          IMAGE_TAG=$(git rev-parse --short HEAD)
+          docker build -t ${{ env.ACR_NAME }}.azurecr.io/catalogservice:${IMAGE_TAG} \
+            -f backend/catalogservice/Dockerfile backend/catalogservice
+          docker push ${{ env.ACR_NAME }}.azurecr.io/catalogservice:${IMAGE_TAG}
+
+      # Build and push frontend
+      - name: Build and push frontend
+        run: |
+          IMAGE_TAG=$(git rev-parse --short HEAD)
+          docker build -t ${{ env.ACR_NAME }}.azurecr.io/frontend:${IMAGE_TAG} \
+            -f frontend/bookstorefe/Dockerfile frontend/bookstorefe
+          docker push ${{ env.ACR_NAME }}.azurecr.io/frontend:${IMAGE_TAG}
+
+      # Set AKS context
+      - name: Set AKS context
+        uses: Azure/aks-set-context@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ env.RESOURCE_GROUP }}
+          cluster-name: ${{ env.AKS_CLUSTER }}
+
+      # Update cartservice deployment
+      - name: Update cartservice
+        run: |
+          IMAGE_TAG=$(git rev-parse --short HEAD)
+          kubectl set image deployment/cart-deployment cart-container=${{ env.ACR_NAME }}.azurecr.io/cartservice:${IMAGE_TAG}
+
+      # Update catalogservice deployment
+      - name: Update catalogservice
+        run: |
+          IMAGE_TAG=$(git rev-parse --short HEAD)
+          kubectl set image deployment/catalog-deployment catalog-container=${{ env.ACR_NAME }}.azurecr.io/catalogservice:${IMAGE_TAG}
+
+      # Update frontend deployment
+      - name: Update frontend
+        run: |
+          IMAGE_TAG=$(git rev-parse --short HEAD)
+          kubectl set image deployment/frontend-deployment frontend-container=${{ env.ACR_NAME }}.azurecr.io/frontend:${IMAGE_TAG}
