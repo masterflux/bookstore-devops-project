@@ -19,9 +19,10 @@ services:
     container_name: cartservice
     ports:
       - "3002:3002"
-    # environment:
-    #   - ANY_ENV=your_value
-    # If you have a DB, add environment variables here
+    environment:
+      - NEXT_PUBLIC_CATALOG_URL=http://catalogservice:3001
+      - NEXT_PUBLIC_CART_URL=http://cartservice:3002
+
 
   catalogservice:
     build:
@@ -30,3 +31,7 @@ services:
     container_name: catalogservice
     ports:
       - "3001:3001"
+    environment:
+      - NEXT_PUBLIC_CATALOG_URL=http://catalogservice:3001
+      - NEXT_PUBLIC_CART_URL=http://cartservice:3002
+
