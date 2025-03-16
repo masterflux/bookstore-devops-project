@@ -21,6 +21,10 @@ const pool = new Pool({
 
 
 // Get all books
+app.get('/', (req, res) => {
+    res.send('Catalog Service is running');
+});
+
 app.get('/books', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM book');

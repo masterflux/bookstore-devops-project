@@ -18,7 +18,7 @@ spec:
           image: bookstorencl.azurecr.io/catalogservice:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 4000
+            - containerPort: 3001
           resources:
             requests:
               cpu: "100m"

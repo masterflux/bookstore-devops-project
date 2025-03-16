@@ -7,6 +7,6 @@ spec:
   type: ClusterIP
   ports:
     - port: 4000
-      targetPort: 4000
+      targetPort: 3001
   selector:
     app: catalogservice
