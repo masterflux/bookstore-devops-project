@@ -20,5 +20,5 @@ spec:
         ports:
         - containerPort: 3002
         env:
-        - name: CART_URL
+        - name: NEXT_PUBLIC_CART_URL
           value: "http://cartservice:3002"
