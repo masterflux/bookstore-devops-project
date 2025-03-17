@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: catalog-deployment
+  name: catalog-deployment-green
   labels:
     app: catalog
-    version: blue
+    version: green
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: catalog
-      version: blue
+      version: green
   template:
     metadata:
       labels:
         app: catalog
-        version: blue
+        version: green
     spec:
       containers:
       - name: catalog-container
-        image: booksstoreaksregistry.azurecr.io/catalogservice:v1  # placeholder tag; will be updated via CI/CD
+        image: booksstoreaksregistry.azurecr.io/catalogservice:v2  # placeholder tag; will be updated via CI/CD
         ports:
         - containerPort: 3001
         env:
