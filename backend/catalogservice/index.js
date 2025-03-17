@@ -10,7 +10,7 @@ app.use(express.json());
 
 const pool = new Pool({
     user: 'bookstore_admin',
-    host: 'bookstore-pg-server.postgres.database.azure.com',
+    host: 'bookstore-pg-server-new.postgres.database.azure.com',
     database: 'postgres',
     password: 'NewSecurePassword123!',
     port: 5432,

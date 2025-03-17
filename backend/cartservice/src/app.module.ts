@@ -13,7 +13,7 @@ import { AuthController } from './user/auth.controller';
     imports: [
         TypeOrmModule.forRoot({
             type: 'postgres',
-            host: 'bookstore-pg-server.postgres.database.azure.com',
+            host: 'bookstore-pg-server-new.postgres.database.azure.com',
             port: 5432,
             username: 'bookstore_admin',
             password: 'NewSecurePassword123!',
