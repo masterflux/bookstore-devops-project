@@ -31,7 +31,7 @@ export function BookCard({ book }: BookCardProps) {
         }
 
         try {
-            const response = await fetch((process.env.NEXT_PUBLIC_CART_URL || 'http://localhost:3002') + '/cart', {
+            const response = await fetch((window.origin + '/api') + '/cart', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export function BookCard({ book }: BookCardProps) {
                     quantity:1
                 }),
             });
-            
+
             increment()
         } catch (error) {
             console.error('Error adding book to cart:', error)

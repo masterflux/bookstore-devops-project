@@ -13,7 +13,7 @@ export default function LoginPage() {
     e.preventDefault()
     const loginfc = async (username: any, password: any) => {
       try {
-        const response = await fetch((process.env.NEXT_PUBLIC_CART_URL || 'http://localhost:3002') + '/auth/login', {
+        const response = await fetch((window.origin + '/api') + '/auth/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

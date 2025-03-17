@@ -64,7 +64,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
     const fetchCartQuantity = useCallback(async (userId:string|null) => {
         try {
-            const res = await fetch((process.env.NEXT_PUBLIC_CART_URL || 'http://localhost:3002') + '/cart/' + userId, {
+            const res = await fetch((window.origin + '/api') + '/cart/' + userId, {
                 method: 'GET',
             })
             if (!res.ok) {
