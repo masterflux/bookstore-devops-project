@@ -48,8 +48,10 @@ app.get('/books/category/:category', async (req, res) => {
         return res.status(500).json({ error: 'Server error' });
     }
 });
-
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:` + port);
-});
-
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(`Server running on http://localhost:${port}`);
+    });
+} else { 
+    module.exports = { app, pool };
+}

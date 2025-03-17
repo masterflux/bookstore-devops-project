@@ -5,6 +5,11 @@ import { CartService } from './cart.service';
 export class CartController {
   constructor(private readonly cartService: CartService) { }
 
+  @Get('health')
+  healthCheck() {
+    return { status: 'OK', code: 200 };
+  }
+
   @Get(':userId')
   getCart(@Param('userId') userId: string) {
     return this.cartService.getCart(userId);
