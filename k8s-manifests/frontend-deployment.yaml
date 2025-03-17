@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend-container
-        image: booksstoreaksregistry.azurecr.io/frontend:v1  # Update tag as needed
+        image: booksstoreregistry.azurecr.io/frontend:v1  # Update tag as needed
         ports:
         - containerPort: 3000
         env:

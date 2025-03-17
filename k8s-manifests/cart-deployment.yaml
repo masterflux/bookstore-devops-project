@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: cart-container
-        image: booksstoreaksregistry.azurecr.io/cartservice:v1  # Update tag as needed
+        image: booksstoreregistry.azurecr.io/cartservice:v1  # Update tag as needed
         ports:
         - containerPort: 3002
         env:
