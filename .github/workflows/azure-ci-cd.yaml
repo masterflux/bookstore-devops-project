@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-  ACR_NAME: BooksStoreRegistry       # Your ACR name (without .azurecr.io)
+  ACR_NAME: BooksStoreRegistry     
   RESOURCE_GROUP: BooksStoreGroup
   AKS_CLUSTER: BooksStoreAKS
 

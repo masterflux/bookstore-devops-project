@@ -16,9 +16,23 @@ spec:
     spec:
       containers:
       - name: cart-container
-        image: booksstoreregistry.azurecr.io/cartservice:v1  # Update tag as needed
+        image: booksstoreregistry.azurecr.io/cartservice:v1  
         ports:
         - containerPort: 3002
         env:
         - name: NEXT_PUBLIC_CART_URL
           value: "http://cartservice:3002"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3002
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3002
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 3
