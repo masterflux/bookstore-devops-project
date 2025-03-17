@@ -23,4 +23,4 @@ spec:
         - name: NEXT_PUBLIC_CATALOG_URL
           value: "http://catalogservice:3001"
         - name: NEXT_PUBLIC_CART_URL
-          value: "http://74.177.169.185"
+          value: "http://74.177.169.185:3002"
