@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bookstore-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"  # Use this if you're using the NGINX Ingress Controller
+spec:
+  rules:
+  - host: bookstore.example.com
+    http:
+      paths:
+      # Route /cart and its subpaths to the cart service
+      - path: /cart(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: cartservice
+            port:
+              number: 3002
+      # Route /catalog and its subpaths to the catalog service
+      - path: /catalog(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: catalogservice
+            port:
+              number: 3001
+      # All other requests go to the frontend
+      - path: /(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80
