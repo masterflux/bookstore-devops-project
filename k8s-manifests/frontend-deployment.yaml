@@ -21,6 +21,6 @@ spec:
         - containerPort: 3000
         env:
         - name: NEXT_PUBLIC_CATALOG_URL
-          value: "http://131.145.56.74/catalog"
+          value: "http://catalogservice:3001"
         - name: NEXT_PUBLIC_CART_URL
-          value: "http://131.145.56.74/cart"
+          value: "http://74.177.169.185"
