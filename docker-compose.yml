@@ -10,7 +10,7 @@ services:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_CATALOG_URL=http://catalogservice:3001
-      - NEXT_PUBLIC_CART_URL=http://cartservice:3002
+      - NEXT_PUBLIC_CART_URL=hhttp://131.145.90.228:3002
 
   cartservice:
     build:
@@ -19,11 +19,7 @@ services:
     container_name: cartservice
     ports:
       - "3002:3002"
-    environment:
-      - NEXT_PUBLIC_CATALOG_URL=http://catalogservice:3001
-      - NEXT_PUBLIC_CART_URL=http://cartservice:3002
-
-
+      
   catalogservice:
     build:
       context: ./backend/catalogservice
@@ -31,7 +27,3 @@ services:
     container_name: catalogservice
     ports:
       - "3001:3001"
-    environment:
-      - NEXT_PUBLIC_CATALOG_URL=http://catalogservice:3001
-      - NEXT_PUBLIC_CART_URL=http://cartservice:3002
-
