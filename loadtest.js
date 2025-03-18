@@ -10,7 +10,7 @@ export let options = {
   };
   
 export default function () {
-  let res = http.get('http://131.145.8.161');
+  let res = http.get('http://131.145.91.125');
  // let res = http.get('http://131.145.8.161/catalog/science?_rsc=zs6pb');
   check(res, { 'status is 200': (r) => r.status === 200 });
   sleep(1);
