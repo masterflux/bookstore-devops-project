@@ -4,10 +4,8 @@ This is the catalog service for the bookstore application, built with **Express.
 
 ## Features
 
-- Admin authentication using JWT
 - Fetch all books
 - Fetch books by category
-- Secure password hashing with bcrypt
 - PostgreSQL database connection using Sequelize
 
 ## Installation
@@ -35,9 +33,6 @@ This is the catalog service for the bookstore application, built with **Express.
    ```
 
 ## API Endpoints
-
-### **Auth**
-- `POST /login` - Authenticate admin and get a JWT token.
 
 ### **Books**
 - `GET /books` - Fetch all books.
