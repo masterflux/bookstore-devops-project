@@ -25,3 +25,10 @@ spec:
         env:
         - name: CATALOG_URL
           value: "http://catalogservice:3001"
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "128Mi"
+          limits:
+            cpu: "20m"
+            memory: "256Mi"
