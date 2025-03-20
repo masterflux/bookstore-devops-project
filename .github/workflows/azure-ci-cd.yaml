@@ -68,7 +68,7 @@ jobs:
         working-directory: backend/catalogservice
         run: |
           echo "Running catalog service tests..."
-          npm  test
+          npm run t123213432est
 
       # Check test results and rollback if they failed
       - name: Check test result and rollback if needed
